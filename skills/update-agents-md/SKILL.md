@@ -1,6 +1,8 @@
-# Update AGENTS.md Files
-
-Before committing, check if any edited files have learnings worth preserving in nearby AGENTS.md files:
+---
+name: update-agents-md
+description: Create concise and valuable updates to AGENTS.md while making changes
+---
+Check if any edited files have learnings worth preserving in nearby AGENTS.md files:
 
 1. **Identify directories with edited files** - Look at which directories you modified
 2. **Check for existing AGENTS.md** - Look for AGENTS.md in those directories or parent directories
@@ -18,8 +20,7 @@ Before committing, check if any edited files have learnings worth preserving in 
 - "Field names must match the template exactly"
 
 **Do NOT add:**
-- Story-specific implementation details
+- Task specific implementation details
 - Temporary debugging notes
-- Information already in progress.txt
 
 Only update AGENTS.md if you have **genuinely reusable knowledge** that would help future work in that directory.
