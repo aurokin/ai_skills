@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# Link all skills from this repository to ~/.claude/skills
+# Link all skills from this repository to ~/.config/opencode/skills
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_DIR="$SCRIPT_DIR/skills"
-CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
+OPENCODE_SKILLS_DIR="$HOME/.config/opencode/skills"
 
-# Create Claude skills directory if it doesn't exist
-mkdir -p "$CLAUDE_SKILLS_DIR"
+# Create OpenCode skills directory if it doesn't exist
+mkdir -p "$OPENCODE_SKILLS_DIR"
 
 # Link each skill
 for skill in "$SKILLS_DIR"/*/; do
     skill_name=$(basename "$skill")
-    target="$CLAUDE_SKILLS_DIR/$skill_name"
+    target="$OPENCODE_SKILLS_DIR/$skill_name"
 
     if [ -L "$target" ]; then
         echo "Updating link: $skill_name"
