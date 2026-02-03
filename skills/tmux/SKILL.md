@@ -15,7 +15,8 @@ Use tmux only when you need an interactive TTY. Prefer exec background mode for 
 SESSION=tmux-python
 
 tmux new -d -s "$SESSION" -n shell
-tmux send-keys -t "$SESSION":0.0 -- 'PYTHON_BASIC_REPL=1 python3 -q' Enter
+tmux send-keys -t "$SESSION":0.0 -- 'PYTHON_BASIC_REPL=1 python3 -q'
+tmux send-keys -t "$SESSION":0.0 Enter
 tmux capture-pane -p -J -t "$SESSION":0.0 -S -200
 ```
 
@@ -41,6 +42,7 @@ To monitor:
 ## Sending input safely
 
 - Prefer literal sends: `tmux send-keys -t target -l -- "$cmd"`.
+- Send Enter as its own command: `tmux send-keys -t target Enter`.
 - Control keys: `tmux send-keys -t target C-c`.
 
 ## Watching output
@@ -69,8 +71,10 @@ for i in 1 2 3 4 5; do
 done
 
 # Launch agents in different workdirs
-tmux send-keys -t agent-1 "cd /tmp/project1 && codex --yolo 'Fix bug X'" Enter
-tmux send-keys -t agent-2 "cd /tmp/project2 && codex --yolo 'Fix bug Y'" Enter
+tmux send-keys -t agent-1 "cd /tmp/project1 && codex --yolo 'Fix bug X'"
+tmux send-keys -t agent-1 Enter
+tmux send-keys -t agent-2 "cd /tmp/project2 && codex --yolo 'Fix bug Y'"
+tmux send-keys -t agent-2 Enter
 
 # Poll for completion (check if prompt returned)
 for sess in agent-1 agent-2; do

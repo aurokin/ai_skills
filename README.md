@@ -1,16 +1,20 @@
 # Custom Skills
 
-A collection of forked and custom Claude Code skills that are symlinked to `~/.claude/skills` for use across all projects.
+A collection of forked and custom skills that are symlinked for use across all projects in OpenCode, Codex, and Claude.
 
 ## Setup
 
-Run the link script to symlink all skills to your Claude configuration:
+Run the link script to symlink all skills to your OpenCode/Codex/Claude configuration:
 
 ```bash
 ./link-skills.sh
 ```
 
-This creates symlinks from `~/.claude/skills/<skill-name>` pointing to the skills in this repository, making them available globally in Claude Code.
+This creates symlinks from the following directories pointing to the skills in this repository, making them available globally:
+
+- `~/.config/opencode/skills/<skill-name>`
+- `~/.codex/skills/<skill-name>`
+- `~/.claude/skills/<skill-name>`
 
 ## Available Skills
 
@@ -34,8 +38,10 @@ skills/
 
 ## Unlinking Skills
 
-To remove a skill symlink:
+To remove a skill symlink, remove it from the configuration you use:
 
 ```bash
+rm ~/.config/opencode/skills/<skill-name>
+rm ~/.codex/skills/<skill-name>
 rm ~/.claude/skills/<skill-name>
 ```
