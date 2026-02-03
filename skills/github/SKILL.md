@@ -5,7 +5,7 @@ description: "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, 
 
 # GitHub Skill
 
-Use the `gh` CLI to interact with GitHub. Always specify `--repo owner/repo` when not in a git directory, or use URLs directly.
+Use the `gh` CLI to interact with GitHub. Always specify `--repo owner/repo` when not in a git directory, or use URLs directly. Prefer SSH URLs (e.g. `git@github.com:owner/repo.git`) over HTTPS unless HTTPS is explicitly required.
 
 ## Pull Requests
 
