@@ -8,6 +8,7 @@ SKILL_TARGET_DIRS=(
     "$HOME/.config/opencode/skills"
     "$HOME/.codex/skills"
     "$HOME/.claude/skills"
+    "$HOME/.gemini/skills"
 )
 
 # Create skill directories if they don't exist
