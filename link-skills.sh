@@ -8,6 +8,7 @@ SKILL_TARGET_DIRS=(
     "$HOME/.config/opencode/skills"
     "$HOME/.codex/skills"
     "$HOME/.claude/skills"
+    "$HOME/.copilot/skills"
     "$HOME/.gemini/skills"
 )
 
