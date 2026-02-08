@@ -41,6 +41,7 @@ This creates symlinks from the following directories pointing to the skills in t
 | Skill | Description |
 |-------|-------------|
 | `bilbo_coding_agent_manager` | Runs/continues Codex/Claude/OpenCode/Pi via PTY/background and tracks ongoing sessions in a markdown registry |
+| `dilbert_notes_librarian` | Uses OpenCode-only in `~/notes` and delegates to `~/notes/AGENTS.md` for notes rules (does not load that file directly here) |
 
 ## Adding New Skills
 
