@@ -16,10 +16,10 @@ OpenClaw-only skills are linked separately:
 ./link-openclaw-skills.sh
 ```
 
-By default this links into `~/.config/openclaw/skills`. Override with:
+By default this links into `~/.openclaw/skills`. Override with:
 
 ```bash
-OPENCLAW_SKILLS_DIR=~/.config/openclaw/skills ./link-openclaw-skills.sh
+OPENCLAW_SKILLS_DIR=~/.openclaw/skills ./link-openclaw-skills.sh
 # or
 ./link-openclaw-skills.sh /custom/skills/dir
 ```
@@ -78,5 +78,5 @@ rm ~/.codex/skills/<skill-name>
 rm ~/.claude/skills/<skill-name>
 
 # If linked via link-openclaw-skills.sh (default target dir)
-rm ~/.config/openclaw/skills/<skill-name>
+rm ~/.openclaw/skills/<skill-name>
 ```

@@ -7,14 +7,14 @@
 #   ./link-openclaw-skills.sh /path/to/dir   # links to explicit target dir
 #
 # Override default target dir via env var:
-#   OPENCLAW_SKILLS_DIR=~/.config/openclaw/skills ./link-openclaw-skills.sh
+#   OPENCLAW_SKILLS_DIR=~/.openclaw/skills ./link-openclaw-skills.sh
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_DIR="$SCRIPT_DIR/openclaw_skills"
 
-DEFAULT_TARGET_DIR="$HOME/.config/openclaw/skills"
+DEFAULT_TARGET_DIR="$HOME/.openclaw/skills"
 TARGET_DIR="${1:-${OPENCLAW_SKILLS_DIR:-$DEFAULT_TARGET_DIR}}"
 
 mkdir -p "$TARGET_DIR"
