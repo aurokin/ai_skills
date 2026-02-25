@@ -1,15 +1,11 @@
 #!/bin/bash
 
-# Link all skills from this repository to supported skill dirs
+# Link all skills from this repository to the shared agents skills dir
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_DIR="$SCRIPT_DIR/skills"
 SKILL_TARGET_DIRS=(
-    "$HOME/.config/opencode/skills"
-    "$HOME/.codex/skills"
-    "$HOME/.claude/skills"
-    "$HOME/.copilot/skills"
-    "$HOME/.gemini/skills"
+    "$HOME/.agents/skills"
 )
 
 # Create skill directories if they don't exist

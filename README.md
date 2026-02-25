@@ -1,10 +1,10 @@
 # Custom Skills
 
-A collection of forked and custom skills that are symlinked for use across all projects in OpenCode, Codex, and Claude.
+A collection of forked and custom skills that are symlinked for use across all projects via the shared `~/.agents/skills` directory.
 
 ## Setup
 
-Run the link script to symlink all skills to your OpenCode/Codex/Claude configuration:
+Run the link script to symlink all global skills:
 
 ```bash
 ./link-skills.sh
@@ -24,11 +24,9 @@ OPENCLAW_SKILLS_DIR=~/.openclaw/skills ./link-openclaw-skills.sh
 ./link-openclaw-skills.sh /custom/skills/dir
 ```
 
-This creates symlinks from the following directories pointing to the skills in this repository, making them available globally:
+This creates symlinks in the shared global directory:
 
-- `~/.config/opencode/skills/<skill-name>`
-- `~/.codex/skills/<skill-name>`
-- `~/.claude/skills/<skill-name>`
+- `~/.agents/skills/<skill-name>`
 
 ## Available Skills
 
@@ -71,12 +69,10 @@ openclaw_skills/
 
 ## Unlinking Skills
 
-To remove a skill symlink, remove it from the configuration you use:
+To remove a global skill symlink:
 
 ```bash
-rm ~/.config/opencode/skills/<skill-name>
-rm ~/.codex/skills/<skill-name>
-rm ~/.claude/skills/<skill-name>
+rm ~/.agents/skills/<skill-name>
 
 # If linked via link-openclaw-skills.sh (default target dir)
 rm ~/.openclaw/skills/<skill-name>

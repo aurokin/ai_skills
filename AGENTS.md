@@ -4,26 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Purpose
 
-This repository manages custom skills that are symlinked for global availability in OpenCode, Codex, and Claude, plus a small set of OpenClaw-only skills.
+This repository manages custom skills that are symlinked for global availability via `~/.agents/skills`, plus a small set of OpenClaw-only skills.
 
 ## Commands
 
 ```bash
-# Link all skills to supported skill dirs
+# Link all global skills to ~/.agents/skills
 ./link-skills.sh
 
 # Link OpenClaw-only skills
 ./link-openclaw-skills.sh
 
-# Remove a skill symlink
-rm ~/.config/opencode/skills/<skill-name>
-rm ~/.codex/skills/<skill-name>
-rm ~/.claude/skills/<skill-name>
+# Remove a global skill symlink
+rm ~/.agents/skills/<skill-name>
 ```
 
 ## Architecture
 
-Global skills are stored in `skills/<skill-name>/SKILL.md`. The `link-skills.sh` script creates symlinks from `~/.config/opencode/skills/<skill-name>`, `~/.codex/skills/<skill-name>`, and `~/.claude/skills/<skill-name>` to each skill directory, making them available across all projects.
+Global skills are stored in `skills/<skill-name>/SKILL.md`. The `link-skills.sh` script creates symlinks from `~/.agents/skills/<skill-name>` to each skill directory, making them available across all projects.
 
 OpenClaw-only skills live in `openclaw_skills/<skill-name>/SKILL.md` and are linked separately via `./link-openclaw-skills.sh`.
 
