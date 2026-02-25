@@ -10,6 +10,14 @@ Run the link script to symlink all global skills:
 ./link-skills.sh
 ```
 
+Reproduce the full upstream + local skill setup from this machine:
+
+```bash
+./install-repro-skills.sh
+```
+
+This installs `getsentry/skills@agents-md` (and removes `agent-md-refactor`), installs the other global skills in use, then links local repo skills.
+
 OpenClaw-only skills are linked separately:
 
 ```bash
