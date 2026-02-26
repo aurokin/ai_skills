@@ -16,12 +16,31 @@ Reproduce the full upstream + local skill setup from this machine:
 ./install-repro-skills.sh
 ```
 
-This installs `getsentry/skills@agents-md` (and removes `agent-md-refactor`), installs the other global skills in use, then links local repo skills.
+This installs `getsentry/skills@agents-md` (and removes `agent-md-refactor`), installs the other global skills in use, then links local repo skills into `~/.agents/skills`.
+
+By default it installs only for universal agents to avoid creating per-tool skill trees like `~/.claude/skills`:
+
+- `codex`
+- `opencode`
+- `gemini-cli`
+- `github-copilot`
+
+Override the target agents if needed:
+
+```bash
+SKILLS_AGENTS="codex opencode" ./install-repro-skills.sh
+```
 
 OpenClaw-only skills are linked separately:
 
 ```bash
 ./link-openclaw-skills.sh
+```
+
+`install-repro-skills.sh` does **not** link OpenClaw skills unless explicitly requested:
+
+```bash
+LINK_OPENCLAW_SKILLS=1 ./install-repro-skills.sh
 ```
 
 By default this links into `~/.openclaw/skills`. Override with:
@@ -40,7 +59,8 @@ This creates symlinks in the shared global directory:
 
 | Skill | Description |
 |-------|-------------|
-| `update-agents-md` | Reminds to update AGENTS.md files with reusable learnings before committing |
+| `plan-reviewer` | Skeptical review of implementation plans/design docs to surface risks, edge cases, and simpler alternatives |
+| `tmux` | Remote-control tmux sessions by sending keystrokes and scraping pane output |
 
 ## OpenClaw Skills
 

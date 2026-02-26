@@ -3,12 +3,15 @@
 # Reproduce this machine's skill setup on another computer.
 # - Installs upstream global skills via the `skills` CLI
 # - Removes deprecated agent-md-refactor if present
-# - Links local custom skills from this repo
+# - Links local custom skills from this repo into ~/.agents/skills
+# - Optionally links OpenClaw-only skills when explicitly requested
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS_BIN="${SKILLS_BIN:-skills}"
+SKILLS_AGENTS="${SKILLS_AGENTS:-codex opencode gemini-cli github-copilot}"
+LINK_OPENCLAW_SKILLS="${LINK_OPENCLAW_SKILLS:-0}"
 
 require_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -19,12 +22,22 @@ require_cmd() {
 
 install_skill() {
   local spec="$1"
+  shift
   echo "Installing: $spec"
-  "$SKILLS_BIN" add "$spec" -g -a '*' -y
+  "$SKILLS_BIN" add "$spec" -g -a "$@" -y
 }
 
 main() {
   require_cmd "$SKILLS_BIN"
+
+  local skills_agents=()
+  IFS=' ' read -r -a skills_agents <<< "$SKILLS_AGENTS"
+  if [ "${#skills_agents[@]}" -eq 0 ]; then
+    echo "No SKILLS_AGENTS configured" >&2
+    exit 1
+  fi
+
+  echo "Installing to ~/.agents/skills for agents: ${skills_agents[*]}"
 
   # Replace old AGENTS.md refactor skill with Sentry's agents-md.
   "$SKILLS_BIN" remove agent-md-refactor -g -y >/dev/null 2>&1 || true
@@ -59,12 +72,18 @@ main() {
   )
 
   for spec in "${specs[@]}"; do
-    install_skill "$spec"
+    install_skill "$spec" "${skills_agents[@]}"
   done
 
   echo "Linking local repo skills..."
   "$SCRIPT_DIR/link-skills.sh"
-  "$SCRIPT_DIR/link-openclaw-skills.sh"
+
+  if [ "$LINK_OPENCLAW_SKILLS" = "1" ]; then
+    echo "Linking OpenClaw-only repo skills..."
+    "$SCRIPT_DIR/link-openclaw-skills.sh"
+  else
+    echo "Skipping OpenClaw skill linking (set LINK_OPENCLAW_SKILLS=1 to enable)."
+  fi
 
   echo "Done."
 }
