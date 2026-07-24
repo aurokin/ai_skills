@@ -398,6 +398,12 @@ describe("dirPath", () => {
 });
 
 describe("optIn agents and the default enabled set", () => {
+  test("real registry: super-claude is opt-in and receives no ordinary unscoped placements", () => {
+    const r = loadRegistry(realRegistryPath());
+    expect(r.agents["super-claude"]!.optIn).toBe(true);
+    expect(r.agents["super-claude"]!.unscopedOwnDir).not.toBe(true);
+  });
+
   test("real registry: hermes is optIn and excluded; the default set is unchanged", () => {
     const r = loadRegistry(realRegistryPath());
     expect(r.agents.hermes!.optIn).toBe(true);
