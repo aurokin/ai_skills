@@ -1,0 +1,4 @@
+interface:
+  display_name: "HTML Artifact"
+  short_description: "Create self-contained HTML review artifacts"
+  default_prompt: "Use $html-artifact to present this as a self-contained HTML document."

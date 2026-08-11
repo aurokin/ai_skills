@@ -417,6 +417,9 @@ Local repo-managed skills live in `skills/<name>/SKILL.md`.
 
 Current local skills:
 - `agents-md`
+- `html-artifact` — creates self-contained HTML documents for plans, reports,
+  comparisons, and UI mock variants; adapted from `html-communication` by
+  [Theo Browne](https://www.youtube.com/@t3dotgg)
 - `to-issues` — gated (`disable-model-invocation: true`); distilled from the
   retired mattpocock fork down to the non-native methodology (tracer-bullet
   vertical slices, HITL/AFK classification, calibration questions), writing
