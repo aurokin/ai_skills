@@ -255,7 +255,9 @@ skills/drive-codex/
   "roots": [
     { "name": "public",  "path": "~/code/skills-manager",  "visibility": "public" },
     { "name": "private", "path": "~/code/skills_private", "visibility": "private" }
-  ]
+  ],
+  "excludeLocalSkills": ["host-incompatible-skill"],
+  "excludeLocalAgents": ["host-incompatible-agent"]
 }
 ```
 
@@ -269,6 +271,9 @@ so shared overlays naming a disabled agent are inert on that host. Agent
 `CLAUDE_CONFIG_DIR` profile) are plain registry entries registered per the
 README's "Registering an Agent Variant" recipe — render channels, unscoped
 own-dir placement, and enablement all derive from registry data.
+`excludeLocalSkills` omits named skills from every registered root on that
+machine without changing the shared public catalog or an overlay;
+`excludeLocalAgents` does the same for agent definitions.
 `acceptedGatedExposures` names skills whose gated exposure is knowingly
 accepted (typically upstream-catalog skills the catalog places in the shared
 root or in a no-gate agent's own dir): doctor downgrades their gated-leak

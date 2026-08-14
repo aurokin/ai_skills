@@ -76,6 +76,10 @@ export function normalizeConfig(env: SkmEnv, raw: MachineConfig, reg: Registry):
       seen.add(name);
     }
   }
+  const excludedSkillsRaw = raw.excludeLocalSkills ?? undefined;
+  const excludedAgentsRaw = raw.excludeLocalAgents ?? undefined;
+  validateExcludedNames("excludeLocalSkills", "skill", excludedSkillsRaw);
+  validateExcludedNames("excludeLocalAgents", "agent-definition", excludedAgentsRaw);
   const roots: Root[] = raw.roots.map((r) => ({ ...r, path: expandTilde(env, r.path) }));
   const config: MachineConfig = {
     version: raw.version,
@@ -85,7 +89,26 @@ export function normalizeConfig(env: SkmEnv, raw: MachineConfig, reg: Registry):
   if (agentsRaw !== undefined) config.agents = agentsRaw;
   if (optInRaw !== undefined) config.optInAgents = optInRaw;
   if (acceptedRaw !== undefined) config.acceptedGatedExposures = acceptedRaw;
+  if (excludedSkillsRaw !== undefined) config.excludeLocalSkills = excludedSkillsRaw;
+  if (excludedAgentsRaw !== undefined) config.excludeLocalAgents = excludedAgentsRaw;
   return config;
+}
+
+function validateExcludedNames(field: string, noun: string, value: unknown): asserts value is string[] | undefined {
+  if (value === undefined) return;
+  if (!Array.isArray(value)) {
+    throw new ConfigError(`machine config \`${field}\` must be a list of ${noun} names`);
+  }
+  const seen = new Set<string>();
+  for (const name of value) {
+    if (typeof name !== "string" || name.length === 0 || /[\s/@]/.test(name)) {
+      throw new ConfigError(`machine config \`${field}\` entries must be valid ${noun} names`);
+    }
+    if (seen.has(name)) {
+      throw new ConfigError(`machine config \`${field}\` lists '${name}' twice`);
+    }
+    seen.add(name);
+  }
 }
 
 /** Load + normalize config, or synthesize defaults when the file is absent. */

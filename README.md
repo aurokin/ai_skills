@@ -73,7 +73,10 @@ bun src/cli.ts root remove ~/code/custom_skills
 
 The machine config is `~/.config/skills-manager/config.json` (or under
 `$XDG_CONFIG_HOME`). No migration is needed when that file does not exist: the
-default public root is derived from the CLI's current checkout.
+default public root is derived from the CLI's current checkout. Set
+`excludeLocalSkills` there to omit named skills from all registered roots on
+that host. Use `excludeLocalAgents` the same way for bundled or overlay agent
+definitions.
 
 ## Commands
 

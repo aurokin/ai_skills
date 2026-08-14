@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { afterEach, describe, expect, test } from "bun:test";
+import { expandTilde } from "../src/env";
 import {
   assertRootsExist,
   defaultConfig,
@@ -27,6 +28,14 @@ describe("repoRoot", () => {
     expect(path.basename(repoRoot())).toBe("skills-manager");
     // Registry lives under it, proving the resolution is right.
     expect(fs.existsSync(path.join(repoRoot(), "registry", "agents.json"))).toBe(true);
+  });
+});
+
+describe("expandTilde", () => {
+  test("expands both slash styles emitted by plans", () => {
+    sandbox = makeSandbox();
+    expect(expandTilde(sandbox.env, "~/.agents/skills")).toBe(path.join(sandbox.home, ".agents/skills"));
+    expect(expandTilde(sandbox.env, "~\\.agents\\skills")).toBe(path.join(sandbox.home, ".agents\\skills"));
   });
 });
 
@@ -123,6 +132,52 @@ describe("loadMachineConfig", () => {
       });
       expect(() => loadMachineConfig(sandbox!.env, reg())).toThrow(msg);
     }
+  });
+
+  test("excludeLocalSkills round-trips and validates skill names", () => {
+    sandbox = makeSandbox();
+    writeMachineConfig(sandbox, {
+      version: 1,
+      roots: [{ name: "public", path: "~/x", visibility: "public" }],
+      excludeLocalSkills: ["agents-md", "to-issues"],
+    });
+    expect(loadMachineConfig(sandbox.env, reg()).excludeLocalSkills).toEqual(["agents-md", "to-issues"]);
+
+    for (const [bad, msg] of [
+      ["agents-md", /must be a list/],
+      [[""], /valid skill names/],
+      [["bad/name"], /valid skill names/],
+      [["agents-md", "agents-md"], /twice/],
+    ] as const) {
+      sandbox.cleanup();
+      sandbox = makeSandbox();
+      writeMachineConfig(sandbox, {
+        version: 1,
+        roots: [{ name: "public", path: "~/x", visibility: "public" }],
+        excludeLocalSkills: bad as unknown as string[],
+      });
+      expect(() => loadMachineConfig(sandbox!.env, reg())).toThrow(msg);
+    }
+  });
+
+  test("excludeLocalAgents round-trips and validates agent-definition names", () => {
+    sandbox = makeSandbox();
+    writeMachineConfig(sandbox, {
+      version: 1,
+      roots: [{ name: "public", path: "~/x", visibility: "public" }],
+      excludeLocalAgents: ["codexrabbit-code-reviewer", "retrorabbit-code-reviewer"],
+    });
+    expect(loadMachineConfig(sandbox.env, reg()).excludeLocalAgents).toEqual([
+      "codexrabbit-code-reviewer",
+      "retrorabbit-code-reviewer",
+    ]);
+
+    writeMachineConfig(sandbox, {
+      version: 1,
+      roots: [{ name: "public", path: "~/x", visibility: "public" }],
+      excludeLocalAgents: ["bad/name"],
+    });
+    expect(() => loadMachineConfig(sandbox!.env, reg())).toThrow(/valid agent-definition names/);
   });
 
   test("agents + optInAgents together is a config error", () => {

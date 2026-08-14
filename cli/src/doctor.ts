@@ -9,6 +9,7 @@ import { parse as parseYaml } from "yaml";
 import { loadContext, registryPath } from "./context";
 import { type SkmEnv, expandTilde } from "./env";
 import { gatedExposureOf, gatedExposureRemedy, gateHonored } from "./gated";
+import { createDirectoryLink } from "./links";
 import { loadMachineConfig } from "./machine-config";
 import { computeDesiredPlacements } from "./placements";
 import { privacyViolation } from "./privacy";
@@ -700,7 +701,7 @@ function applyFixes(
       if (sp.kind === "symlink" && (entry.kind === "absent" || (entry.kind === "symlink" && entry.broken))) {
         removeExisting(abs);
         fs.mkdirSync(path.dirname(abs), { recursive: true });
-        fs.symlinkSync(dp.source.path, abs);
+        createDirectoryLink(dp.source.path, abs);
         fixed++;
       } else if (
         sp.kind === "rendered" &&

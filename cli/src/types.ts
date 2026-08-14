@@ -149,6 +149,10 @@ export interface Root {
 export interface MachineConfig {
   version: number;
   roots: Root[];
+  /** Skill names omitted from every registered root on this machine. */
+  excludeLocalSkills?: string[];
+  /** Agent-definition names omitted from every registered root on this machine. */
+  excludeLocalAgents?: string[];
   /** Enabled agent ids (exact set). Defaults to supported-minus-optIn when absent. */
   agents?: string[];
   /** Additive opt-ins on top of the default set. Mutually exclusive with `agents`. */

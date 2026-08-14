@@ -18,6 +18,7 @@ import { appendAudit, makeAuditEntry } from "./audit";
 import { loadMachineConfig } from "./machine-config";
 import { composedTreeFromSource, treeHashOfMemory, writeComposedTree } from "./composed/render";
 import { hashGatedTree, renderGatedTree, writeGatedTree } from "./gated";
+import { createDirectoryLink } from "./links";
 import { buildPlan, planHashOf } from "./plan";
 import { privacyViolation } from "./privacy";
 import { loadRegistry } from "./registry";
@@ -322,7 +323,7 @@ function materialize(
     );
   } else {
     removeExisting(abs);
-    fs.symlinkSync(src.path, abs);
+    createDirectoryLink(src.path, abs);
     upsertPlacement(
       state,
       keyOf(action),

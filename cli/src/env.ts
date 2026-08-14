@@ -154,9 +154,9 @@ export function resolveCopilotHome(env: SkmEnv): string {
   return env.copilotHome ? expandTilde(env, env.copilotHome) : path.join(env.home, ".copilot");
 }
 
-/** Expand a leading `~`/`~/` against the injected home. Non-tilde paths pass through. */
+/** Expand a leading tilde against the injected home using either platform separator. */
 export function expandTilde(env: SkmEnv, p: string): string {
   if (p === "~") return env.home;
-  if (p.startsWith("~/")) return path.join(env.home, p.slice(2));
+  if (p.startsWith("~/") || p.startsWith("~\\")) return path.join(env.home, p.slice(2));
   return p;
 }

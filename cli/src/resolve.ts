@@ -61,6 +61,8 @@ export function resolveDesiredState(
   const composedWarnings = new Map<string, Warning[]>();
   const composedOwnerRoot = new Map<string, string>();
   const enabled = enabledAgents(config, registry);
+  const excludedLocalSkills = new Set(config.excludeLocalSkills ?? []);
+  const excludedLocalAgents = new Set(config.excludeLocalAgents ?? []);
 
   for (const root of config.roots) {
     if (!fs.existsSync(root.path)) throw new RootMissingError(root);
@@ -75,6 +77,7 @@ export function resolveDesiredState(
         .sort();
 
       for (const name of names) {
+        if (excludedLocalSkills.has(name)) continue;
         const skillDir = path.join(skillsDir, name);
         const skillMd = path.join(skillDir, "SKILL.md");
         if (!fs.existsSync(skillMd)) continue; // a dir without SKILL.md is not a skill
@@ -123,6 +126,7 @@ export function resolveDesiredState(
         .sort();
 
       for (const name of names) {
+        if (excludedLocalAgents.has(name)) continue;
         const defDir = path.join(agentsDir, name);
         if (!isAgentDefDir(defDir)) continue; // a dir without agent.yaml is not a def
 

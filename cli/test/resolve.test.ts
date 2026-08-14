@@ -6,6 +6,7 @@ import { RootMissingError, hashDesiredState, resolveDesiredState } from "../src/
 import type { MachineConfig, Registry } from "../src/types";
 import {
   makeAgentScopes,
+  makeAgentDef,
   makeOverlay,
   makeRoot,
   makeSandbox,
@@ -62,6 +63,40 @@ describe("resolveDesiredState — union + collisions", () => {
     const config: MachineConfig = { version: 1, roots: [pub], agents: ["codex"] };
     const desired = resolveDesiredState(sandbox.env, config, reg());
     expect(desired.skills.map((s) => s.name)).toEqual(["real"]);
+  });
+
+  test("omits machine-excluded local skills from every root", () => {
+    sandbox = makeSandbox();
+    const pub = makeRoot(sandbox, "public", "public");
+    const priv = makeRoot(sandbox, "private", "private");
+    makeSkill(pub.path, "agents-md");
+    makeSkill(priv.path, "agents-md");
+    makeSkill(pub.path, "html-artifact");
+
+    const config: MachineConfig = {
+      version: 1,
+      roots: [pub, priv],
+      agents: ["codex"],
+      excludeLocalSkills: ["agents-md"],
+    };
+    const desired = resolveDesiredState(sandbox.env, config, reg());
+    expect(desired.skills.map((s) => s.name)).toEqual(["html-artifact"]);
+  });
+
+  test("omits machine-excluded agent definitions but preserves others", () => {
+    sandbox = makeSandbox();
+    const pub = makeRoot(sandbox, "public", "public");
+    makeAgentDef(pub.path, "code-reviewer", {});
+    makeAgentDef(pub.path, "plan-reviewer", {});
+
+    const config: MachineConfig = {
+      version: 1,
+      roots: [pub],
+      agents: ["codex"],
+      excludeLocalAgents: ["code-reviewer"],
+    };
+    const desired = resolveDesiredState(sandbox.env, config, reg());
+    expect(desired.agentDefs.map((d) => d.name)).toEqual(["plan-reviewer"]);
   });
 });
 
