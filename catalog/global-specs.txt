@@ -7,3 +7,4 @@ openclaw/openclaw@tmux
 vercel-labs/agent-browser@agent-browser
 vercel-labs/agent-skills@web-design-guidelines
 blader/humanizer@humanizer
+cursor/plugins@unslop
