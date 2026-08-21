@@ -18,6 +18,7 @@ import {
   sweepHermesBrokenSymlinks,
 } from "../src/upstream/sync";
 import type { LocalSkillsConfig } from "../src/deploy/local-config";
+import { classifyInstalledGlobalNames } from "../src/upstream/verb";
 
 let base: string;
 beforeEach(() => {
@@ -84,6 +85,7 @@ describe("buildSyncPlan", () => {
       desiredSpecs: desired,
       preservedNames: ["handmade"],
       installedNames: ["stale-a", "keep-b", "handmade"],
+      removableNames: ["stale-a", "keep-b", "handmade"],
       nonHermesAgents: ["codex"],
     });
     expect(plan.removals).toEqual(["stale-a"]);
@@ -100,6 +102,7 @@ describe("buildSyncPlan", () => {
       desiredSpecs: desired,
       preservedNames: [],
       installedNames: ["stale-a"],
+      removableNames: ["stale-a"],
       nonHermesAgents: [],
     });
     expect(plan.skipStaleRemoval).toBe(true);
@@ -125,6 +128,42 @@ describe("buildSyncPlan", () => {
       "add", "openclaw/openclaw", "-g", "-a", "codex", "hermes-agent",
       "-s", "github", "tmux", "-y", "--dangerously-accept-openclaw-risks",
     ]);
+  });
+});
+
+describe("installed global discovery", () => {
+  test("local symlinks reported by the skills CLI never enter stale removal", () => {
+    const home = path.join(base, "home");
+    const globalDir = path.join(home, ".agents", "skills");
+    const source = path.join(base, "local-source");
+    fs.mkdirSync(globalDir, { recursive: true });
+    fs.mkdirSync(source);
+    fs.mkdirSync(path.join(globalDir, "upstream-real"));
+    fs.symlinkSync(source, path.join(globalDir, "local-live"));
+    fs.symlinkSync(path.join(base, "gone"), path.join(globalDir, "local-dangling"));
+
+    const installed = classifyInstalledGlobalNames(
+      { home, machineName: "test", clock: { now: () => "2026-07-10T00:00:00.000Z" } },
+      [
+        { name: "upstream-real", path: path.join(globalDir, "upstream-real") },
+        { name: "local-live", path: path.join(globalDir, "local-live") },
+        { name: "local-dangling", path: path.join(globalDir, "local-dangling") },
+        { name: "elsewhere", path: path.join(home, ".claude", "skills", "elsewhere") },
+      ],
+    );
+
+    expect(installed).toEqual({
+      presentNames: ["upstream-real", "local-live", "local-dangling"],
+      removableNames: ["upstream-real"],
+    });
+    const plan = buildSyncPlan({
+      desiredSpecs: ["local/repo@local-live"],
+      preservedNames: [],
+      installedNames: installed.presentNames,
+      removableNames: installed.removableNames,
+      nonHermesAgents: ["codex"],
+    });
+    expect(plan).toMatchObject({ removals: ["upstream-real"], addBatches: [] });
   });
 });
 

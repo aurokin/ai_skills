@@ -109,7 +109,10 @@ export interface SyncPlan {
 export function buildSyncPlan(input: {
   desiredSpecs: string[];
   preservedNames: string[];
+  /** All reported names, including local symlinks that satisfy desired presence. */
   installedNames: string[];
+  /** Real upstream installs eligible for stale removal; excludes local symlinks. */
+  removableNames: string[];
   nonHermesAgents: string[];
 }): SyncPlan {
   const desiredNames = new Set(input.desiredSpecs.map((s) => specSkill(s)));
@@ -120,7 +123,7 @@ export function buildSyncPlan(input: {
   const removals: string[] = [];
   const preservedInstalled: string[] = [];
   if (!skipStaleRemoval) {
-    for (const name of [...installed].sort()) {
+    for (const name of [...new Set(input.removableNames)].sort()) {
       if (preservedNames.has(name)) {
         preservedInstalled.push(name);
         continue;

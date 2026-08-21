@@ -57,9 +57,39 @@ function syncPaths(config: MachineConfig): {
   };
 }
 
-/** `skills list -g --json` filtered to ~/.agents/skills/ — the global installs we manage.
- *  The skills CLI ignores symlinks, so skm-linked local skills are naturally excluded. */
-function listInstalledGlobalNames(env: SkmEnv, skillsBin: string): string[] {
+/**
+ * Classify `skills list -g --json` output. Some skills CLI versions report
+ * skm's local symlinks: they count as present so sync does not install over
+ * them, but only non-links may enter upstream stale removal.
+ */
+export function classifyInstalledGlobalNames(
+  env: SkmEnv,
+  entries: unknown[],
+): { presentNames: string[]; removableNames: string[] } {
+  const prefix = `${path.join(env.home, ".agents", "skills")}${path.sep}`;
+  const presentNames: string[] = [];
+  const removableNames: string[] = [];
+  for (const entry of entries) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const { name, path: p } = entry as { name?: unknown; path?: unknown };
+    if (typeof name !== "string" || typeof p !== "string") continue;
+    if (!p.startsWith(prefix)) continue;
+    presentNames.push(name);
+    try {
+      if (fs.lstatSync(p).isSymbolicLink()) continue;
+    } catch {
+      // Preserve the existing CLI-authoritative behavior for stale list entries.
+    }
+    removableNames.push(name);
+  }
+  return { presentNames, removableNames };
+}
+
+/** `skills list -g --json` classified for presence and stale-removal eligibility. */
+function listInstalledGlobalNames(
+  env: SkmEnv,
+  skillsBin: string,
+): { presentNames: string[]; removableNames: string[] } {
   const out = execFileSync(skillsBin, ["list", "-g", "--json"], { encoding: "utf8" });
   let parsed: unknown;
   try {
@@ -68,15 +98,7 @@ function listInstalledGlobalNames(env: SkmEnv, skillsBin: string): string[] {
     throw new Error(`skills list -g --json returned invalid JSON: ${(e as Error).message}`);
   }
   if (!Array.isArray(parsed)) throw new Error("skills list -g --json did not return an array");
-  const prefix = `${path.join(env.home, ".agents", "skills")}${path.sep}`;
-  const names: string[] = [];
-  for (const entry of parsed) {
-    if (typeof entry !== "object" || entry === null) continue;
-    const { name, path: p } = entry as { name?: unknown; path?: unknown };
-    if (typeof name !== "string" || typeof p !== "string") continue;
-    if (p.startsWith(prefix)) names.push(name);
-  }
-  return names;
+  return classifyInstalledGlobalNames(env, parsed);
 }
 
 /** The upstream full-coverage audit (bash phase between update and add). */
@@ -190,11 +212,12 @@ export async function runUpstream(env: SkmEnv, opts: VerbOptions): Promise<VerbO
   for (const s of summary) lines.push(`  ${s.repo}${s.fullCoverage ? "^" : ""}: ${s.skills.join(" ")}`);
   lines.push("  ^ full upstream coverage for this repo");
 
-  const installedNames = listInstalledGlobalNames(env, skillsBin);
+  const installed = listInstalledGlobalNames(env, skillsBin);
   const plan: SyncPlan = buildSyncPlan({
     desiredSpecs,
     preservedNames,
-    installedNames,
+    installedNames: installed.presentNames,
+    removableNames: installed.removableNames,
     nonHermesAgents,
   });
 
