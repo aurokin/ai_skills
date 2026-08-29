@@ -10,6 +10,8 @@ Create one self-contained HTML file for communication and review, not product co
 ## Build the document
 
 - Write it like a spec, not a landing page. Make it dense and scannable. Avoid heroes, decorative chrome, marketing copy, and em dashes.
+- Visualize information when it can make the material easier to understand or more compelling. Choose the form that best fits the content.
+- Keep visuals information-dense. Do not invent data or add visuals merely to decorate the page.
 - Default to true black (`#000`), white primary text, and dark gray for secondary surfaces or accents.
 - Make it mobile-readable with a responsive viewport and no fixed-width layout.
 - Use semantic HTML, inline CSS, inline SVG, and data-URL images. Use HTTPS images only when embedding them is impractical and the source is safe to disclose.
