@@ -426,10 +426,14 @@ Current local skills:
 - `html-artifact` — creates self-contained HTML documents for plans, reports,
   comparisons, and UI mock variants; adapted from `html-communication` by
   [Theo Browne](https://www.youtube.com/@t3dotgg)
+- `humanizer` — gated (`disable-model-invocation: true`); rewrites AI-sounding
+  prose while preserving its meaning. Locally forked; see credits below.
 - `to-issues` — gated (`disable-model-invocation: true`); distilled from the
   retired mattpocock fork down to the non-native methodology (tracer-bullet
   vertical slices, HITL/AFK classification, calibration questions), writing
   blockers-first into the connected tracker via MCP
+- `unslop` — model-invocable (`disable-model-invocation: false`); removes AI
+  writing patterns. Locally forked; see credits below.
 
 `to-prd` and `linear-yeet` were retired 2026-07 (frontier agents produce
 PRDs and drive the Linear MCP natively); `split-to-prs`, an exact fork of
@@ -442,6 +446,23 @@ To add a new local skill:
 1. Create `skills/<name>/SKILL.md`
 2. Add frontmatter with `name` and `description`
 3. Run `skm plan` / `skm apply` (from `cli/`, via `bun`)
+
+### Writing skill fork credits
+
+The instruction bodies in these forks are unchanged from upstream. Their only
+`SKILL.md` changes are invocation metadata: Unslop allows model invocation, and
+Humanizer requires explicit user invocation. Both retain their upstream MIT
+license notices.
+
+| Local fork | Author and upstream snapshot | License |
+|---|---|---|
+| [Unslop](skills/unslop/SKILL.md) | Lauren Tan, [PStack in `cursor/plugins` at `93b00b89`](https://github.com/cursor/plugins/tree/93b00b89ef425a9c1bac0d0b317dfc49c930ac99/pstack/skills/unslop) | [MIT](skills/unslop/LICENSE) |
+| [Humanizer](skills/humanizer/SKILL.md) | Siqi Chen, [`blader/humanizer` at `e2e92e7b`](https://github.com/blader/humanizer/tree/e2e92e7b4b8229253ed5c8e81dc65463fdeddda5) | [MIT](skills/humanizer/LICENSE) |
+
+These skills are local sources, not entries in `catalog/global-specs.txt`.
+Upstream refreshes must preserve the local invocation metadata. Existing
+external installations must be removed through their installer before
+`skm apply` can place the local forks; `skm` will not overwrite foreign files.
 
 ## Tests
 
